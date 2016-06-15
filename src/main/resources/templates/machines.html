@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<link th:href="@{smartMenu.css}" rel="stylesheet" />
+
+<title>测试机资源占用</title>
+</head>
+<body>
+	<noscript>
+		<h2 style="color: #ff0000">貌似你的浏览器不支持websocket</h2>
+	</noscript>
+    <input type="hidden" id="clientFlag" th:value="${thizIp}" />
+	<table id="listTable" border="1" cellpadding="3" cellspacing="1" width="125px;" align="center" >
+        <tr>
+            <td width="20px;" align="center"><font color='red'>^_^</font></td>
+            <td style="width:15px;height:15px;" th:each="ip:${ips}" th:text="${ip}">
+            </td>
+        </tr>
+        <tr th:each="pro:${projects}">
+            <td align="center" th:text="${pro}"></td>
+            <td th:id="(${proStat.index}+a)"></td>
+            <td th:id="(${proStat.index}+b)"></td>
+            <td th:id="(${proStat.index}+c)"></td>
+            <td th:id="(${proStat.index}+d)"></td>
+            <td th:id="(${proStat.index}+e)"></td>
+            <td th:id="(${proStat.index}+f)"></td>
+            <td th:id="(${proStat.index}+g)"></td>
+        </tr>
+    </table>
+    
+    <p id="response"></p>
+    
+	<script th:src="@{sockjs.min.js}"></script>
+	<script th:src="@{stomp.min.js}"></script>
+	<script th:src="@{jquery.js}"></script>
+	<script th:src="@{jquery-smartMenu.js}"></script>
+	<script type="text/javascript">
+		var menuData = [
+	                    [{
+	                            text: "占用",
+	                            func: function(){
+	                                if(!$(this).text()){
+	                                	sendReq($(this).attr("id"), 2);
+	                                }
+	                            }
+	                    }],
+	                    [{
+	                            text: "长期占用",
+	                            func: function(){
+	                                if(!$(this).text()){
+	                                	sendReq($(this).attr("id"), 3);
+	                                }
+	                            }
+	                    }],
+	                    [{
+	                            text: "释放",
+	                            func: function(){
+	                                if(!$(this).text()){
+	                                	sendReq($(this).attr("id"), 1);
+	                                }
+	                            }
+	                    }]
+	                ];
+		
+		var stompClient = null;
+		
+		function connect() {
+	        var socket = new SockJS('/machinesEndpoint');
+	        stompClient = Stomp.over(socket);
+	        stompClient.connect({}, function(frame) {
+	            stompClient.subscribe('/topic/machines', function(respnose){
+	                showResponse(JSON.parse(respnose.body));
+	            });
+	        });
+	    }
+
+        function chooseColor(obj){
+            var color = "";
+			switch(obj.type){
+				case 2 : color = "green";	break;
+				case 3 : color = "red";		break;
+			}
+			return color;
+        }
+
+	    function initStatus() {
+	        $.ajax({
+                 type: 'GET',
+                 url: '/flushState',
+                 success: function(result){
+                    if(!!result){
+                        for(var p in result){
+                            document.getElementById(p).style.backgroundColor = chooseColor(result[p]);
+                        }
+                    }
+                 }
+            });
+	    }
+		
+		function sendReq(id, type) {
+	        stompClient.send("/occupy", {}, JSON.stringify({'id': id, 'type': type, 'clientFlag' : $("#clientFlag").val()}));
+	    }
+		
+		function showResponse(obj){
+			if(obj.status == 200){
+				document.getElementById(obj.id).style.backgroundColor = chooseColor(obj);
+			}
+			if(!!obj.rspMsg){
+		        $("#response").append(obj.rspMsg);
+		    }
+		}
+		
+	   $(document).ready(function(){
+	       $("#listTable td").smartMenu(menuData, {
+	            name: "listTable",
+	            beforeShow: function() {
+	                $.smartMenu.remove();
+	            }
+	        });
+	       connect();
+	       initStatus();
+	   });
+	</script>
+</body>
+</html>
