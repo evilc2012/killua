@@ -16,7 +16,7 @@
     <input type="hidden" id="clientFlag" th:value="${thizIp}" />
 	<table id="listTable" border="1" cellpadding="3" cellspacing="1" width="125px;" align="center" >
         <tr>
-            <td width="20px;" align="center"><font color='red'>^_^</font></td>
+            <td width="20px;" align="center"><font color='red'>Killua</font></td>
             <td style="width:15px;height:15px;" th:each="ip:${ips}" th:text="${ip}">
             </td>
         </tr>
@@ -106,11 +106,15 @@
 	    }
 		
 		function showResponse(obj){
+		    var fontColor = "green";
 			if(obj.status == 200){
 				document.getElementById(obj.id).style.backgroundColor = chooseColor(obj);
+			} else {
+			    fontColor = "red";
 			}
+
 			if(!!obj.rspMsg){
-		        $("#response").append(obj.rspMsg);
+		        $("#response").append('<font color="' + fontColor + '">' + obj.rspMsg + '</font><br/>');
 		    }
 		}
 		

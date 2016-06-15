@@ -20,7 +20,7 @@ public class WebSocketController {
     @SendTo("/topic/machines")
     public OccupyResponse occupy(OccupyMessage message){
         int status = occupyMachineService.occupy(message.getId(), message.getType(), message.getClientFlag());
-        return new OccupyResponse(status > 0 ? 200 : 500, "用户[" + message.getClientFlag() + "]" + OccupyResult.getMsg(status), message.getId(), message.getType());
+        return new OccupyResponse((status > 0 ? 200 : 500), "用户[" + message.getClientFlag() + "]" + OccupyResult.getMsg(status), message.getId(), message.getType());
     }
 
 }

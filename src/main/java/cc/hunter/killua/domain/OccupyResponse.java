@@ -9,7 +9,7 @@ public class OccupyResponse extends OccupyDomain {
 
     private int status;
 
-    public OccupyResponse(int status, String obj, String id, int type){
+    public OccupyResponse(int status, String rspMsg, String id, int type){
         this.status = status;
         this.rspMsg = rspMsg;
         this.id = id;
