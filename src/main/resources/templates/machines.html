@@ -22,13 +22,13 @@
         </tr>
         <tr th:each="pro:${projects}">
             <td align="center" th:text="${pro}"></td>
-            <td th:id="(${proStat.index}+a)"></td>
-            <td th:id="(${proStat.index}+b)"></td>
-            <td th:id="(${proStat.index}+c)"></td>
-            <td th:id="(${proStat.index}+d)"></td>
-            <td th:id="(${proStat.index}+e)"></td>
-            <td th:id="(${proStat.index}+f)"></td>
-            <td th:id="(${proStat.index}+g)"></td>
+            <td th:id="(${proStat.index}+'_0')"></td>
+            <td th:id="(${proStat.index}+'_1')"></td>
+            <td th:id="(${proStat.index}+'_2')"></td>
+            <td th:id="(${proStat.index}+'_3')"></td>
+            <td th:id="(${proStat.index}+'_4')"></td>
+            <td th:id="(${proStat.index}+'_5')"></td>
+            <td th:id="(${proStat.index}+'_6')"></td>
         </tr>
     </table>
     
@@ -94,7 +94,8 @@
                  success: function(result){
                     if(!!result){
                         for(var p in result){
-                            document.getElementById(p).style.backgroundColor = chooseColor(result[p]);
+                            $("#" + p)[0].style.backgroundColor = chooseColor(result[p]);
+                            $("#" + p)[0].innerHTML = result[p].name;
                         }
                     }
                  }
@@ -112,9 +113,15 @@
 			} else {
 			    fontColor = "red";
 			}
-
 			if(!!obj.rspMsg){
-		        $("#response").append('<font color="' + fontColor + '">' + obj.rspMsg + '</font><br/>');
+			    if(! ('Notification' in window) ){
+                    $("#response").append('<font color="' + fontColor + '">' + obj.rspMsg + '</font><br/>');
+                } else {
+                    Notification.requestPermission(function(permission){
+                        var notification = new Notification('通知', {body:obj.rspMsg, icon:'http://i2.zastatic.com/zhenai3/zhenai2015/img/myhome/logo_c269fa4.png', dir:'auto'});
+                    });
+                }
+                $("#" + obj.id)[0].innerHTML=obj.occupant;
 		    }
 		}
 		

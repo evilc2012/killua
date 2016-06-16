@@ -24,4 +24,7 @@ public interface OccupyMachineService {
      */
     public Map<String, OccupyInfo> getOccupyInfoMap();
 
+    String getOccupant(String clientFlag);
+
+    String getOccupyMsg(String id);
 }

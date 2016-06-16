@@ -9,11 +9,14 @@ public class OccupyResponse extends OccupyDomain {
 
     private int status;
 
-    public OccupyResponse(int status, String rspMsg, String id, int type){
+    private String occupant;
+
+    public OccupyResponse(int status, String rspMsg, String id, int type, String occupant){
         this.status = status;
         this.rspMsg = rspMsg;
         this.id = id;
         this.type = type;
+        this.occupant = occupant;
     }
 
     public String getRspMsg() {
@@ -24,4 +27,7 @@ public class OccupyResponse extends OccupyDomain {
         return status;
     }
 
+    public String getOccupant() {
+        return occupant;
+    }
 }

@@ -1,5 +1,6 @@
 package cc.hunter.killua.web;
 
+import cc.hunter.killua.constants.MachineConstants;
 import cc.hunter.killua.domain.OccupyInfo;
 import cc.hunter.killua.service.OccupyMachineService;
 import cc.hunter.killua.util.RequestUtil;
@@ -21,18 +22,14 @@ import java.util.Map;
 @Controller
 public class WebController {
 
-    private static final String[] ips = new String[] { "10.10.10.12", "10.10.10.31", "10.10.10.47", "10.10.10.99", "10.10.10.100",
-            "10.10.10.136", "10.10.10.190" };
-    private static final String[] projects = new String[]{"website", "baseweb2008", "wapsite", "mobileapi", "business", "bsm"};
-
     @Autowired
     private OccupyMachineService occupyMachineService;
 
     @RequestMapping("/")
     public String index(HttpServletRequest request, Model model) {
 
-        model.addAttribute("ips", ips);
-        model.addAttribute("projects", projects);
+        model.addAttribute("ips", MachineConstants.ips);
+        model.addAttribute("projects", MachineConstants.projects);
 
         String ip = RequestUtil.getIpAddr(request);
         model.addAttribute("thizIp", ip);

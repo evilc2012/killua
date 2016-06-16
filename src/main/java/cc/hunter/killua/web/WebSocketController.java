@@ -2,6 +2,7 @@ package cc.hunter.killua.web;
 
 import cc.hunter.killua.domain.*;
 import cc.hunter.killua.service.OccupyMachineService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.*;
 import org.springframework.stereotype.Controller;
@@ -19,8 +20,15 @@ public class WebSocketController {
     @MessageMapping("/occupy")
     @SendTo("/topic/machines")
     public OccupyResponse occupy(OccupyMessage message){
-        int status = occupyMachineService.occupy(message.getId(), message.getType(), message.getClientFlag());
-        return new OccupyResponse((status > 0 ? 200 : 500), "用户[" + message.getClientFlag() + "]" + OccupyResult.getMsg(status), message.getId(), message.getType());
+        String id = message.getId();
+        String flag = message.getClientFlag();
+        int status = occupyMachineService.occupy(id, message.getType(), flag);
+        String occupant = "";
+        if(status > 0){
+            occupant = occupyMachineService.getOccupant(flag);
+        }
+        String resultMsg = "[" + occupant + "][" + occupyMachineService.getOccupyMsg(id) + "][" + OccupyResult.getMsg(status) + "]";
+        return new OccupyResponse((status > 0 ? 200 : 500), resultMsg, id, message.getType(), occupant);
     }
 
 }

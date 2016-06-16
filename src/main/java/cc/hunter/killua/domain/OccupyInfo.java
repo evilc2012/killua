@@ -6,10 +6,12 @@ package cc.hunter.killua.domain;
 public class OccupyInfo {
 
     private String  ip;
+    private String  name;
     private int     type;
 
-    public OccupyInfo(String ip, int type) {
+    public OccupyInfo(String ip, String name, int type) {
         this.ip = ip;
+        this.name = name;
         this.type = type;
     }
 
@@ -27,5 +29,13 @@ public class OccupyInfo {
 
     public void setType(int type) {
         this.type = type;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }
