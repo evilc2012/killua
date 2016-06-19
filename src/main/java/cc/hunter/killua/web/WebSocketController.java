@@ -2,7 +2,6 @@ package cc.hunter.killua.web;
 
 import cc.hunter.killua.domain.*;
 import cc.hunter.killua.service.OccupyMachineService;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.*;
 import org.springframework.stereotype.Controller;
@@ -10,7 +9,6 @@ import org.springframework.stereotype.Controller;
 /**
  * Created by Administrator on 2016/6/15.
  */
-
 @Controller
 public class WebSocketController {
 

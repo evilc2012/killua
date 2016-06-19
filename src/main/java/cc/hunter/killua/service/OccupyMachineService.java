@@ -2,10 +2,10 @@ package cc.hunter.killua.service;
 
 import cc.hunter.killua.domain.OccupyInfo;
 
-import java.util.*;
+import java.util.Map;
 
 /**
- * Created by Administrator on 2016/6/15.
+ * Created by EvilC on 2016/6/19.
  */
 public interface OccupyMachineService {
 
@@ -27,4 +27,5 @@ public interface OccupyMachineService {
     String getOccupant(String clientFlag);
 
     String getOccupyMsg(String id);
+
 }
