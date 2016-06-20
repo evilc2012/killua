@@ -19,7 +19,7 @@ public interface KilluaOccupyMapper {
      * @param machine
      * @return
      */
-    @Insert("insert into killua_user_occupy(user_id, project, machine) values(#{userId}, #{project}, #{machine})")
+    @Insert("insert into killua_user_occupy(user_id, project, machine) values(#{0}, #{1}, #{2})")
     int occupy(Long userId, String project, String machine);
 
     /**
@@ -28,7 +28,7 @@ public interface KilluaOccupyMapper {
      * @param machine
      * @return
      */
-    @Select("select count(*) from killua_user_occupy where user_id = #{userId} and project = #{project} and machine = #{machine}")
+    @Select("select count(*) from killua_user_occupy where user_id = #{0} and project = #{1} and machine = #{2}")
     int isFree(Long userId, String project, String machine);
 
     /**
@@ -38,7 +38,7 @@ public interface KilluaOccupyMapper {
      * @param machine
      * @return
      */
-    @Delete("delete from killua_user_occupy where user_id = #{userId} and project = #{project} and machine = #{machine}")
+    @Delete("delete from killua_user_occupy where user_id = #{0} and project = #{1} and machine = #{2}")
     int release(Long userId, String project, String machine);
 
     /**

@@ -38,15 +38,9 @@ var menuData = [
                  url: '/flushState',
                  success: function(result){
                     if(!!result){
-                        for(var obj in result){
-                            console.log(obj);
-                            $("#" + obj.id)[0].style.backgroundColor = 'green';
-                            if(!!c){
-                                $("#" + obj.id)[0].innerHTML = obj.realname;
-                            } else {
-                                $("#" + obj.id)[0].innerHTML = '';
-                            }
-                        }
+                        var obj = result[0];
+                        $("#" + obj.id)[0].style.backgroundColor = 'green';
+                        $("#" + obj.id)[0].innerHTML = obj.realname;
                     }
                  }
             });

@@ -8,9 +8,7 @@ import java.util.Map;
  */
 public class MachineConstants {
 
-    public static final String[] ips = new String[] {};
-    public static final String[] projects = new String[]{};
-
-    public static Map<String, String> userInfos = new HashMap<>();
+    public static final String[] ips = new String[] {"m1", "m2", "m3", "m4", "m5", "m6", "m7"};
+    public static final String[] projects = new String[]{"web", "wap", "app"};
 
 }

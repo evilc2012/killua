@@ -42,6 +42,7 @@ public class WebController {
         KilluaContext.setCurrentUser(user);
 
         model.addAttribute("userId", user.getId());
+        model.addAttribute("realname", user.getRealname());
         model.addAttribute("ips", MachineConstants.ips);
         model.addAttribute("projects", MachineConstants.projects);
         return "machines";
