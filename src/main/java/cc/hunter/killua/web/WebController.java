@@ -1,10 +1,10 @@
 package cc.hunter.killua.web;
 
 import cc.hunter.killua.constants.MachineConstants;
+import cc.hunter.killua.context.KilluaContext;
 import cc.hunter.killua.domain.OccupyInfo;
 import cc.hunter.killua.entity.KilluaUser;
 import cc.hunter.killua.service.OccupyMachineService;
-import cc.hunter.killua.util.RequestUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Map;
+import java.util.List;
 
 /**
  * Created by Administrator on 2016/6/15.
@@ -36,26 +36,21 @@ public class WebController {
 
     @RequestMapping("/index")
     public String machines(HttpServletRequest request, Model model) {
-
         SecurityContext sc = SecurityContextHolder.getContext();
         Authentication auth = sc.getAuthentication();
         KilluaUser user = (KilluaUser) auth.getPrincipal();
+        KilluaContext.setCurrentUser(user);
 
-        model.addAttribute("realname", user.getRealname());
-
+        model.addAttribute("userId", user.getId());
         model.addAttribute("ips", MachineConstants.ips);
         model.addAttribute("projects", MachineConstants.projects);
-
-        String ip = RequestUtil.getIpAddr(request);
-        model.addAttribute("thizIp", ip);
-
         return "machines";
     }
 
     @RequestMapping(value="/flushState", method = {RequestMethod.GET})
     @ResponseBody
-    public Map<String, OccupyInfo> flushState(HttpServletRequest request, HttpServletResponse response, Model model) {
-       return occupyMachineService.getOccupyInfoMap();
+    public List<OccupyInfo> flushState(HttpServletRequest request, HttpServletResponse response, Model model) {
+        return occupyMachineService.getOccupyInfoMap();
     }
 
 }

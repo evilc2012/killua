@@ -1,9 +1,19 @@
 package cc.hunter.killua.service.impl;
 
 import cc.hunter.killua.constants.MachineConstants;
+import cc.hunter.killua.context.KilluaContext;
 import cc.hunter.killua.domain.OccupyInfo;
+import cc.hunter.killua.entity.KilluaUser;
+import cc.hunter.killua.mapper.KilluaOccupyMapper;
+import cc.hunter.killua.mapper.KilluaUserMapper;
 import cc.hunter.killua.service.OccupyMachineService;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import java.util.*;
 
@@ -14,59 +24,94 @@ import java.util.*;
 @Service
 public class OccupyMachineServiceImpl implements OccupyMachineService {
 
-    private Map<String, OccupyInfo> occupyInfoMap = new HashMap<String, OccupyInfo>();
+    private String currName;
+
+    @Autowired
+    private KilluaOccupyMapper killuaOccupyMapper;
+
+    @Autowired
+    private KilluaUserMapper killuaUserMapper;
 
     @Override
-    public int occupy(String id, int type, String ip) {
-        boolean result = operate(id, type, ip);
+    public int occupy(String id, int type, Long userId) {
+        boolean result = operate(id, type, userId);
         return result ? type : -type;
     }
 
     @Override
-    public Map<String, OccupyInfo> getOccupyInfoMap() {
-        return occupyInfoMap;
+    public List<OccupyInfo> getOccupyInfoMap() {
+        List<OccupyInfo> list = killuaOccupyMapper.findOccupyStatus();
+        for(OccupyInfo info : list){
+            int projectIdx = ArrayUtils.indexOf(MachineConstants.projects, info.getProject());
+            int machineIdx = ArrayUtils.indexOf(MachineConstants.ips, info.getMachine());
+            info.setId(projectIdx + "_" + machineIdx);
+        }
+        return list;
     }
 
     @Override
-    public String getOccupant(String clientFlag) {
-        if (MachineConstants.userInfos.containsKey(clientFlag)){
-            return MachineConstants.userInfos.get(clientFlag);
-        }
-        return clientFlag;
+    public String getOccupant() {
+        return currName;
     }
 
     @Override
     public String getOccupyMsg(String id) {
         if(id.contains("_")){
-            String[] indexs = id.split("_");
-            int projectIndex = NumberUtils.toInt(indexs[0]);
-            int ipIndex = NumberUtils.toInt(indexs[1]);
-            return MachineConstants.projects[projectIndex] + " " + MachineConstants.ips[ipIndex];
+            return StringUtils.join(parseId(id), " ");
         }
         return "";
     }
 
-    private synchronized boolean operate(String id, int type, String ip){
+    private synchronized boolean operate(String id, int type, Long userId){
         if(id == null || id.trim().isEmpty()){
             return false;
         }
 
-        boolean result = false;
-
-        if (type == 2 || type == 3){
-            OccupyInfo info = occupyInfoMap.get(id);
-            if(info == null){
-                info = new OccupyInfo(ip, getOccupant(ip), type);
-                occupyInfoMap.put(id, info);
-                result = true;
-            }
-        } else if(type == 1){
-            OccupyInfo info = occupyInfoMap.get(id);
-            if(info != null && ip.equals(info.getIp())){
-                occupyInfoMap.remove(id);
-                result = true;
-            }
+        KilluaUser user = KilluaContext.getCurrentUser();
+        if(user == null){
+            user = killuaUserMapper.findUserById(userId);
         }
-        return result;
+        if(user == null){
+            return false;
+        }
+
+        String[] info = parseId(id);
+        if(info == null){
+            return false;
+        }
+        String project = info[0];
+        String machine = info[1];
+
+        int free = killuaOccupyMapper.isFree(userId, project, machine);
+        boolean isFree = free == 0;
+
+        if(type == 1 && !isFree){
+            int releaseResult = killuaOccupyMapper.release(userId, project, machine);
+            if(releaseResult > 0){
+                currName = "";
+            }
+            return releaseResult > 0;
+        } else if(type == 2 && isFree){
+            int occupyResult = killuaOccupyMapper.occupy(userId, project, machine);
+            if(occupyResult > 0){
+                currName = user.getRealname();
+            }
+            return occupyResult > 0;
+        }
+
+        return false;
     }
+
+    private String[] parseId(String id){
+        if(id == null || id.trim().isEmpty()){
+            return null;
+        }
+        String[] indexs = id.split("_");
+        int projectIndex = NumberUtils.toInt(indexs[0]);
+        int ipIndex = NumberUtils.toInt(indexs[1]);
+        String project = MachineConstants.projects[projectIndex];
+        String machine = MachineConstants.ips[ipIndex];
+        return new String[]{project, machine};
+    }
+
 }

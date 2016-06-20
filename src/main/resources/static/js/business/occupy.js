@@ -9,15 +9,6 @@ var menuData = [
 	                            }
 	                    }],
 	                    [{
-	                            text: "长期占用",
-	                            func: function(){
-	                                var id = $(this).attr("id");
-	                                if(!!id){
-	                                	sendReq(id, 3);
-	                                }
-	                            }
-	                    }],
-	                    [{
 	                            text: "释放",
 	                            func: function(){
 	                                var id = $(this).attr("id");
@@ -40,14 +31,6 @@ var menuData = [
 	        });
 	    }
 
-        function chooseColor(obj){
-            var color = "";
-			switch(obj.type){
-				case 2 : color = "green";	break;
-				case 3 : color = "red";		break;
-			}
-			return color;
-        }
 
 	    function initStatus() {
 	        $.ajax({
@@ -55,13 +38,13 @@ var menuData = [
                  url: '/flushState',
                  success: function(result){
                     if(!!result){
-                        for(var p in result){
-                            var c = chooseColor(result[p]);
-                            $("#" + p)[0].style.backgroundColor = c;
+                        for(var obj in result){
+                            console.log(obj);
+                            $("#" + obj.id)[0].style.backgroundColor = 'green';
                             if(!!c){
-                                $("#" + p)[0].innerHTML = result[p].name;
+                                $("#" + obj.id)[0].innerHTML = obj.realname;
                             } else {
-                                $("#" + p)[0].innerHTML = '';
+                                $("#" + obj.id)[0].innerHTML = '';
                             }
                         }
                     }
@@ -69,8 +52,16 @@ var menuData = [
             });
 	    }
 
+	    function chooseColor(obj){
+            var color = "";
+        	switch(obj.type){
+        	    case 2 : color = "green";	break;
+        	}
+        	return color;
+        }
+
 		function sendReq(id, type) {
-	        stompClient.send("/occupy", {}, JSON.stringify({'id': id, 'type': type, 'clientFlag' : $("#clientFlag").val()}));
+	        stompClient.send("/occupy", {}, JSON.stringify({'id': id, 'type': type, "userId":$('#userId').val()}));
 	    }
 
 		function showResponse(obj){
@@ -88,6 +79,6 @@ var menuData = [
                         var notification = new Notification('通知', {body:obj.rspMsg, icon:'http://i2.zastatic.com/zhenai3/zhenai2015/img/myhome/logo_c269fa4.png', dir:'auto'});
                     });
                 }
-                $("#" + obj.id)[0].innerHTML=obj.occupant;
+                $("#" + obj.id)[0].innerHTML = obj.occupant;
 		    }
 		}

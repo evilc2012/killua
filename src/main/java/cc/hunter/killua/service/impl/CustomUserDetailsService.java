@@ -27,12 +27,13 @@ public class CustomUserDetailsService implements UserDetailsService {
         if (killuaUser == null){
             throw new UsernameNotFoundException("can't find user by username:" + username);
         }
-        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+
         List<KilluaRole> roles = killuaUserMapper.findRolesByUserid(killuaUser.getId());
-        for(KilluaRole role : roles){
-            authorities.add(new SimpleGrantedAuthority(role.getName()));
+        if(roles != null && !roles.isEmpty()){
+            killuaUser.setRoles(roles);
         }
-        return new User(killuaUser.getUsername(), killuaUser.getPassword(), authorities);
+
+        return killuaUser;
     }
 
 }

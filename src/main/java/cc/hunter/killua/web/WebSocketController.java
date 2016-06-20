@@ -19,11 +19,10 @@ public class WebSocketController {
     @SendTo("/topic/machines")
     public OccupyResponse occupy(OccupyMessage message){
         String id = message.getId();
-        String flag = message.getClientFlag();
-        int status = occupyMachineService.occupy(id, message.getType(), flag);
+        int status = occupyMachineService.occupy(id, message.getType(), message.getUserId());
         String occupant = "";
         if(status > 0){
-            occupant = occupyMachineService.getOccupant(flag);
+            occupant = occupyMachineService.getOccupant();
         }
         String resultMsg = "[" + occupant + "][" + occupyMachineService.getOccupyMsg(id) + "][" + OccupyResult.getMsg(status) + "]";
         return new OccupyResponse((status > 0 ? 200 : 500), resultMsg, id, message.getType(), occupant);

@@ -14,6 +14,9 @@ import java.util.List;
 @Mapper
 public interface KilluaUserMapper {
 
+    @Select("select * from killua_user where id = #{userId}")
+    KilluaUser findUserById(Long userId);
+
     @Select("select * from killua_user where username = #{username}")
     KilluaUser findUserByUsername(@Param("username") String username);
 

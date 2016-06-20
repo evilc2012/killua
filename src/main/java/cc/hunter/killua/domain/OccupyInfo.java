@@ -1,41 +1,54 @@
 package cc.hunter.killua.domain;
 
+import java.io.Serializable;
+
 /**
  * Created by Administrator on 2016/6/15.
  */
-public class OccupyInfo {
+public class OccupyInfo implements Serializable{
 
-    private String  ip;
-    private String  name;
-    private int     type;
+    private static final long serialVersionUID = 1L;
 
-    public OccupyInfo(String ip, String name, int type) {
-        this.ip = ip;
-        this.name = name;
-        this.type = type;
+    private String  id;
+    private String  realname;
+    private String  project;
+    private String  machine;
+
+    public OccupyInfo(String realname, String project, String machine) {
+        this.realname = realname;
+        this.project = project;
+        this.machine = machine;
     }
 
-    public String getIp() {
-        return ip;
+    public String getId() {
+        return id;
     }
 
-    public void setIp(String ip) {
-        this.ip = ip;
+    public void setId(String id) {
+        this.id = id;
     }
 
-    public int getType() {
-        return type;
+    public String getRealname() {
+        return realname;
     }
 
-    public void setType(int type) {
-        this.type = type;
+    public void setRealname(String realname) {
+        this.realname = realname;
     }
 
-    public String getName() {
-        return name;
+    public String getProject() {
+        return project;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setProject(String project) {
+        this.project = project;
+    }
+
+    public String getMachine() {
+        return machine;
+    }
+
+    public void setMachine(String machine) {
+        this.machine = machine;
     }
 }
