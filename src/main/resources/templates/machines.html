@@ -9,6 +9,9 @@
         body {
         padding-top: 50px;
         }
+        td {
+        align: center
+        }
     </style>
 </head>
 <body>
@@ -26,14 +29,14 @@
         </div>
     </nav>
 
-	<table id="listTable" border="1" cellpadding="3" cellspacing="1" width="125px;" align="center" >
+	<table id="listTable" class="table table-bordered">
         <tr>
-            <td width="20px;" align="center"><font color='red'>☈</font></td>
-            <td style="width:15px;height:15px;" th:each="ip:${ips}" th:text="${ip}">
+            <td width="20%"><font color='red'>☈</font></td>
+            <td th:each="ip:${ips}" th:text="${ip}">
             </td>
         </tr>
         <tr th:each="pro:${projects}">
-            <td align="center" th:text="${pro}"></td>
+            <td th:text="${pro}"></td>
             <td th:id="(${proStat.index}+'_0')"></td>
             <td th:id="(${proStat.index}+'_1')"></td>
             <td th:id="(${proStat.index}+'_2')"></td>

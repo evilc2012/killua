@@ -60,8 +60,10 @@ public class KilluaUser extends CommonEntity implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> auths = new ArrayList<GrantedAuthority>();
         List<KilluaRole> roles = this.getRoles();
-        for(KilluaRole role : roles){
-            auths.add(new SimpleGrantedAuthority(role.getName()));
+        if(roles != null && !roles.isEmpty()){
+            for(KilluaRole role : roles){
+                auths.add(new SimpleGrantedAuthority(role.getName()));
+            }
         }
         return auths;
     }

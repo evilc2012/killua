@@ -11,9 +11,6 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import java.util.*;
 
@@ -51,7 +48,7 @@ public class OccupyMachineServiceImpl implements OccupyMachineService {
 
     @Override
     public String getOccupant() {
-        return currName;
+        return KilluaContext.getCurrentUser().getRealname();
     }
 
     @Override
@@ -73,6 +70,8 @@ public class OccupyMachineServiceImpl implements OccupyMachineService {
         }
         if(user == null){
             return false;
+        } else {
+            KilluaContext.setCurrentUser(user);
         }
 
         String[] info = parseId(id);
@@ -82,14 +81,14 @@ public class OccupyMachineServiceImpl implements OccupyMachineService {
         String project = info[0];
         String machine = info[1];
 
-        int free = killuaOccupyMapper.isFree(userId, project, machine);
-        boolean isFree = free == 0;
+        Long occupyUserId = killuaOccupyMapper.getOccupant(project, machine);
+        boolean isFree = occupyUserId == null;
+        if(!isFree && !occupyUserId.equals(userId)){
+            return false;
+        }
 
         if(type == 1 && !isFree){
             int releaseResult = killuaOccupyMapper.release(userId, project, machine);
-            if(releaseResult > 0){
-                currName = "";
-            }
             return releaseResult > 0;
         } else if(type == 2 && isFree){
             int occupyResult = killuaOccupyMapper.occupy(userId, project, machine);

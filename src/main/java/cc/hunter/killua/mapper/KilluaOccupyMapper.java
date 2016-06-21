@@ -23,13 +23,13 @@ public interface KilluaOccupyMapper {
     int occupy(Long userId, String project, String machine);
 
     /**
-     * 机器是否空闲
+     * 获取占用者
      * @param project
      * @param machine
-     * @return
+     * @return userId
      */
-    @Select("select count(*) from killua_user_occupy where user_id = #{0} and project = #{1} and machine = #{2}")
-    int isFree(Long userId, String project, String machine);
+    @Select("select user_id from killua_user_occupy where project = #{0} and machine = #{1}")
+    Long getOccupant(String project, String machine);
 
     /**
      * 释放机器

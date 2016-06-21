@@ -20,10 +20,7 @@ public class WebSocketController {
     public OccupyResponse occupy(OccupyMessage message){
         String id = message.getId();
         int status = occupyMachineService.occupy(id, message.getType(), message.getUserId());
-        String occupant = "";
-        if(status > 0){
-            occupant = occupyMachineService.getOccupant();
-        }
+        String occupant = occupyMachineService.getOccupant();
         String resultMsg = "[" + occupant + "][" + occupyMachineService.getOccupyMsg(id) + "][" + OccupyResult.getMsg(status) + "]";
         return new OccupyResponse((status > 0 ? 200 : 500), resultMsg, id, message.getType(), occupant);
     }
